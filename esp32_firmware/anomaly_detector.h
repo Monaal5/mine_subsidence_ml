@@ -23,12 +23,11 @@ static inline InferenceResult predict_anomaly(const float raw_features[NUM_FEATU
     
     unsigned long start_time = micros();
     
-    // Call emlearn generated inline inference function
-    int pred_class = subsidence_detector_predict(scaled, NUM_FEATURES);
+    // Call inline inference function (returns float normalized anomaly score)
+    float score = subsidence_detector_predict(scaled, NUM_FEATURES);
     
-    // In emlearn Isolation Forest, scores < 0 or class -1 indicate outliers
-    res.anomaly_score = (float)pred_class;
-    res.is_anomalous = (pred_class < 0) || (res.anomaly_score < ANOMALY_THRESHOLD);
+    res.anomaly_score = score;
+    res.is_anomalous = (res.anomaly_score < ANOMALY_THRESHOLD);
     
     res.execution_time_us = micros() - start_time;
     

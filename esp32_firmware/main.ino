@@ -49,7 +49,7 @@ void loop() {
     InferenceResult result = predict_anomaly(fv.features);
     
     // 4. Output Diagnostic Telemetry
-    Serial.print("["); Serial.print(millis()); Serial.strip(); Serial.print("] Node: "); Serial.print(NODE_ID);
+    Serial.print("["); Serial.print(millis()); Serial.print("] Node: "); Serial.print(NODE_ID);
     Serial.print(" | Tilt: "); Serial.print(fv.features[0], 4);
     Serial.print(" | Score: "); Serial.print(result.anomaly_score, 4);
     Serial.print(" | Status: "); Serial.print(result.is_anomalous ? "ALERT/ANOMALY" : "NORMAL");

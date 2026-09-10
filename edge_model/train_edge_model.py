@@ -156,6 +156,13 @@ def generate_isolation_forest_c_header(model, threshold):
     """Generates standalone C code representing the Isolation Forest decision trees."""
     estimators = model.estimators_
     n_trees = len(estimators)
+    max_samples = model.max_samples_
+    
+    # Calculate c(n) average path length for max_samples (Euler's gamma ~ 0.5772156649)
+    if max_samples > 2:
+        c_n = 2.0 * (np.log(max_samples - 1) + 0.5772156649) - (2.0 * (max_samples - 1) / max_samples)
+    else:
+        c_n = 1.0
     
     tree_structs = []
     
@@ -190,6 +197,7 @@ def generate_isolation_forest_c_header(model, threshold):
 #include <math.h>
 
 #define NUM_TREES {n_trees}
+#define C_NORM_FACTOR {c_n:.6f}f
 #define ISOLATION_THRESHOLD {threshold:.6f}f
 
 typedef struct {{
@@ -224,15 +232,15 @@ static inline float compute_tree_depth(const Node* nodes, const float* features)
     return depth;
 }}
 
-// Run full Isolation Forest inference and return average negative depth score
+// Run full Isolation Forest inference and return normalized anomaly score
+// Standard formula: s = -2^(-avg_depth / c(n)), matching scikit-learn score_samples()
 static inline float subsidence_detector_predict(const float* features, int num_features) {{
     float total_depth = 0.0f;
     for (int i = 0; i < NUM_TREES; i++) {{
         total_depth += compute_tree_depth(FOREST_TREES[i], features);
     }}
     float avg_depth = total_depth / (float)NUM_TREES;
-    // Negate average depth so smaller depth (easier isolation) -> more negative score (anomaly)
-    return -avg_depth;
+    return -powf(2.0f, -(avg_depth / C_NORM_FACTOR));
 }}
 
 #endif // ISOLATION_FOREST_MODEL_H

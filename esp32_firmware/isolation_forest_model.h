@@ -9,6 +9,7 @@
 #include <math.h>
 
 #define NUM_TREES 10
+#define C_NORM_FACTOR 10.244771f
 #define ISOLATION_THRESHOLD -0.612677f
 
 typedef struct {
@@ -1653,15 +1654,15 @@ static inline float compute_tree_depth(const Node* nodes, const float* features)
     return depth;
 }
 
-// Run full Isolation Forest inference and return average negative depth score
+// Run full Isolation Forest inference and return normalized anomaly score
+// Standard formula: s = -2^(-avg_depth / c(n)), matching scikit-learn score_samples()
 static inline float subsidence_detector_predict(const float* features, int num_features) {
     float total_depth = 0.0f;
     for (int i = 0; i < NUM_TREES; i++) {
         total_depth += compute_tree_depth(FOREST_TREES[i], features);
     }
     float avg_depth = total_depth / (float)NUM_TREES;
-    // Negate average depth so smaller depth (easier isolation) -> more negative score (anomaly)
-    return -avg_depth;
+    return -powf(2.0f, -(avg_depth / C_NORM_FACTOR));
 }
 
 #endif // ISOLATION_FOREST_MODEL_H
