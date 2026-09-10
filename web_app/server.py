@@ -3,7 +3,18 @@ Mine Subsidence Monitoring System — FastAPI Server & Web App
 ============================================================
 Serves the web UI dashboard, interactive ML test bench, and REST API
 integrating Stage 1 Edge TinyML, Stage 2 Gateway Correlator, and Stage 3 Cloud LSTM models.
+Optimized for Low Memory Cloud Free-Tier Deployment (<250MB RAM).
 """
+
+import os
+import sys
+
+# Suppress TF logs & restrict thread allocations for 512MB RAM cloud free-tiers
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
+os.environ['OMP_NUM_THREADS'] = '1'
+os.environ['TF_NUM_INTRAOP_THREADS'] = '1'
+os.environ['TF_NUM_INTEROP_THREADS'] = '1'
 
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.staticfiles import StaticFiles
@@ -14,12 +25,8 @@ import numpy as np
 import pandas as pd
 import joblib
 import json
-import os
-import sys
 import time
 
-# Suppress TF logs
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 from tensorflow import keras
 
@@ -65,15 +72,19 @@ except Exception as e:
     print(f"  [WARN] Failed to load Cloud LSTM model: {e}")
     cloud_model, cloud_scaler, cloud_feature_cols = None, None, []
 
-# Load dataset samples for simulation
+# Memory-optimized dataset loading for scenario simulation
 try:
-    feat_df = pd.read_csv(os.path.join(DATASET_DIR, 'feature_vectors_per_node.csv'))
-    raw_df = pd.read_csv(os.path.join(DATASET_DIR, 'raw_sensor_data.csv'))
+    # Read subset to stay comfortably under 250MB RAM limit
+    feat_df = pd.read_csv(
+        os.path.join(DATASET_DIR, 'feature_vectors_per_node.csv'),
+        nrows=5000,
+        usecols=['node_id', 'tilt_mean', 'strain_delta', 'vib_rms', 'label']
+    )
     pos_df = pd.read_csv(os.path.join(DATASET_DIR, 'node_positions.csv'))
-    print(f"  [OK] Dataset loaded ({len(feat_df):,} rows)")
+    print(f"  [OK] Dataset loaded ({len(feat_df):,} scenario sample rows)")
 except Exception as e:
     print(f"  [WARN] Failed to load dataset: {e}")
-    feat_df, raw_df, pos_df = None, None, None
+    feat_df, pos_df = None, None
 
 # Import spatial correlator
 sys.path.append(os.path.join(BASE_DIR, 'gateway_logic'))
@@ -104,7 +115,7 @@ class GatewayPacketRequest(BaseModel):
     packets: Dict[str, Dict[str, float]]
 
 class CloudPredictionRequest(BaseModel):
-    sequence: List[List[float]] # 288 timesteps x 40 features
+    sequence: List[List[float]]
 
 
 # ============================================================================
@@ -151,7 +162,6 @@ def predict_edge(req: EdgePredictionRequest):
     exec_time_us = (time.perf_counter() - start_t) * 1e6
     is_anomalous = bool(score < edge_threshold or req.crack_status == 0)
     
-    # Rating out of 100
     norm_score = max(0.0, min(100.0, (score - (-0.8)) / (0.0 - (-0.8)) * 100.0))
     rating = "NORMAL" if not is_anomalous else ("WARNING" if norm_score > 30 else "CRITICAL ANOMALY")
     
@@ -181,7 +191,6 @@ def predict_cloud(req: CloudPredictionRequest):
         
     seq = np.array(req.sequence, dtype=np.float32)
     if seq.shape != (288, 40):
-        # Resize or pad if necessary
         if seq.shape[1] == 40 and seq.shape[0] < 288:
             pad = np.zeros((288 - seq.shape[0], 40), dtype=np.float32)
             seq = np.vstack([pad, seq])
@@ -244,7 +253,6 @@ def get_scenario_data(scenario_name: str):
     if len(subset) == 0:
         subset = feat_df.head(100)
         
-    # Take 50 timesteps per node
     sample_nodes = {}
     for node_id in ['N1', 'N2', 'N3', 'N4', 'N5']:
         node_data = subset[subset['node_id'] == node_id].head(50).to_dict(orient="records")
@@ -257,4 +265,5 @@ def get_scenario_data(scenario_name: str):
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8050)
+    port = int(os.environ.get("PORT", 8050))
+    uvicorn.run(app, host="0.0.0.0", port=port)
