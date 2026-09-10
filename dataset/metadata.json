@@ -1,0 +1,57 @@
+{
+  "generated_at": "2026-09-09T13:25:55.892671",
+  "seed": 42,
+  "panel_width_m": 200,
+  "panel_length_m": 1500,
+  "num_nodes": 5,
+  "total_days": 90,
+  "sample_interval_min": 5,
+  "samples_per_node": 25920,
+  "total_rows": 129600,
+  "phases": {
+    "normal": "Day 0-60",
+    "pre_subsidence": "Day 60-75",
+    "active_subsidence": "Day 75-85",
+    "stabilization": "Day 85-90"
+  },
+  "blast_events": [
+    {
+      "day": 12,
+      "hour": 14,
+      "duration_samples": 3
+    },
+    {
+      "day": 28,
+      "hour": 10,
+      "duration_samples": 2
+    },
+    {
+      "day": 45,
+      "hour": 16,
+      "duration_samples": 4
+    },
+    {
+      "day": 68,
+      "hour": 11,
+      "duration_samples": 3
+    },
+    {
+      "day": 82,
+      "hour": 9,
+      "duration_samples": 2
+    }
+  ],
+  "node_influences": {
+    "N1": 0.228,
+    "N2": 0.923,
+    "N3": 1.0,
+    "N4": 0.835,
+    "N5": 0.228
+  },
+  "label_encoding": {
+    "0": "normal",
+    "1": "pre_subsidence",
+    "2": "active_subsidence",
+    "3": "blast_event"
+  }
+}

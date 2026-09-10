@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  mine-subsidence-platform:
+    build: .
+    container_name: mine_subsidence_app
+    ports:
+      - "8050:8050"
+    environment:
+      - PORT=8050
+      - TF_CPP_MIN_LOG_LEVEL=2
+    restart: always

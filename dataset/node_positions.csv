@@ -1,0 +1,6 @@
+node_id,x_m,y_m,zone
+N1,30,375,edge
+N2,80,750,mid
+N3,100,750,center
+N4,130,750,mid
+N5,170,1125,edge
