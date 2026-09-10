@@ -19,6 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScenarioPlayer();
     initScenarioChart();
     initDashboardPresets();
+    initLiveHardwarePolling();
 });
 
 // ============================================================================
@@ -604,4 +605,33 @@ async function loadScenario(scenarioName) {
     } catch (err) {
         console.error("Scenario Load Error:", err);
     }
+}
+
+function initLiveHardwarePolling() {
+    setInterval(async () => {
+        try {
+            const res = await fetch('/api/nodes/live');
+            if (!res.ok) return;
+            const liveNodes = await res.json();
+            
+            Object.keys(liveNodes).forEach(nodeId => {
+                const info = liveNodes[nodeId];
+                if (nodeMarkers[nodeId]) {
+                    const color = info.stale ? '#94a3b8' : (info.is_anomalous ? '#dc2626' : '#16a34a');
+                    const statusText = info.stale ? 'OFFLINE / STALE' : (info.is_anomalous ? 'ALERT / ANOMALY' : 'NORMAL');
+                    nodeMarkers[nodeId].setStyle({ fillColor: color });
+                    nodeMarkers[nodeId].setPopupContent(`
+                        <div style="color: #0f172a; font-family: sans-serif; padding: 2px;">
+                            <strong>Node ${nodeId} (${info.stale ? 'Offline / Stale' : 'Live Hardware Active'})</strong><br>
+                            Pitch: ${info.pitch.toFixed(2)}° | Roll: ${info.roll.toFixed(2)}°<br>
+                            Tilt: ${info.tilt_mean.toFixed(2)}° | Vib: ${info.vib_rms.toFixed(2)} m/s²<br>
+                            <span style="font-weight: 700; color: ${color};">Status: ${statusText}</span>
+                        </div>
+                    `);
+                }
+            });
+        } catch (e) {
+            // silent catch
+        }
+    }, 3000);
 }

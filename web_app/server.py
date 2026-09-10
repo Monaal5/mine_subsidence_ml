@@ -105,11 +105,25 @@ class EdgePredictionRequest(BaseModel):
     crack_status: int = Field(1, description="Crack status (1=intact, 0=broken)")
     temp_humidity_index: float = Field(0.55, description="Combined env index (0-1)")
 
+class NodeIngestPacket(BaseModel):
+    node_id: int = Field(1, description="Node ID (1-5)")
+    timestamp: int = Field(0, description="Unix timestamp from RTC")
+    pitch: float = Field(0.0, description="Pitch angle (deg)")
+    roll: float = Field(0.0, description="Roll angle (deg)")
+    mpu_vib_rms: float = Field(0.0, description="MPU6050 vibration RMS (m/s2)")
+    adxl_vib_rms: float = Field(0.0, description="ADXL345 vibration RMS (m/s2)")
+    stage1_anomaly_score: int = Field(0, description="Rule-based anomaly flag (0 or 1)")
+    lat: float = Field(30.7588, description="Latitude fallback")
+    lng: float = Field(76.7685, description="Longitude fallback")
+
 class GatewayPacketRequest(BaseModel):
     packets: Dict[str, Dict[str, float]]
 
 class CloudPredictionRequest(BaseModel):
     sequence: List[List[float]]
+
+# Global in-memory store for live hardware telemetry
+latest_packets: Dict[str, dict] = {}
 
 
 # ============================================================================
@@ -127,6 +141,49 @@ def health_check():
             "dataset_available": True
         }
     }
+
+@app.post("/api/ingest")
+def ingest_packet(pkt: NodeIngestPacket):
+    """Receives live hardware sensor payload from Master Gateway ESP32 over HTTP/HTTPS."""
+    node_key = f"N{pkt.node_id}"
+    pkt_dict = pkt.dict()
+    pkt_dict["received_at"] = time.time()
+    
+    # Calculate derived features
+    tilt_mag = float(np.sqrt(pkt.pitch**2 + pkt.roll**2))
+    vib_rms = max(pkt.mpu_vib_rms, pkt.adxl_vib_rms)
+    pkt_dict["tilt_mean"] = round(tilt_mag, 4)
+    pkt_dict["vib_rms"] = round(vib_rms, 4)
+    
+    # Run Edge Isolation Forest model scoring if available
+    if edge_model is not None and edge_scaler is not None:
+        try:
+            # 8 features: tilt_mean, tilt_rate, strain_delta, vib_rms, vib_peak, vib_dominant_freq, crack_status, temp_humidity_index
+            raw_f = np.array([[tilt_mag, 0.0, 0.0, vib_rms, vib_rms*1.5, 14.5, 1.0, 0.5]], dtype=np.float32)
+            scaled = edge_scaler.transform(raw_f)
+            score = float(edge_model.score_samples(scaled)[0])
+            pkt_dict["edge_score"] = round(score, 5)
+            pkt_dict["is_anomalous"] = bool(score < edge_threshold or pkt.stage1_anomaly_score == 1)
+        except Exception:
+            pkt_dict["edge_score"] = -0.45
+            pkt_dict["is_anomalous"] = bool(pkt.stage1_anomaly_score == 1)
+    else:
+        pkt_dict["edge_score"] = -0.45
+        pkt_dict["is_anomalous"] = bool(pkt.stage1_anomaly_score == 1)
+        
+    latest_packets[node_key] = pkt_dict
+    return {"status": "ok", "node": node_key, "is_anomalous": pkt_dict["is_anomalous"]}
+
+@app.get("/api/nodes/live")
+def get_live_nodes():
+    """Returns real-time hardware telemetry and active/stale status for all nodes."""
+    now = time.time()
+    res = {}
+    for k, v in latest_packets.items():
+        node_data = dict(v)
+        node_data["stale"] = (now - v.get("received_at", now)) > 30  # 30-second heartbeat timeout
+        res[k] = node_data
+    return res
 
 @app.get("/", response_class=HTMLResponse)
 def serve_dashboard():
