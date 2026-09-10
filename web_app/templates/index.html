@@ -137,93 +137,51 @@
                 </div>
 
                 <div class="schematic-box">
-                    <!-- Surface Facility Layer -->
-                    <div class="schematic-surface-light">
-                        <div class="facility-chip">
-                            <span class="facility-icon">🏭</span>
-                            <span class="facility-name">Preparation Plant</span>
+                    <div style="background: #0f172a; padding: 12px 18px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
+                        <span style="color: #f8fafc; font-weight: 700; font-size: 0.85rem;">⛏️ Geological Cross-Section Visualizer (Geomechanical Strata Model)</span>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="scen-img-btn active" id="btn-show-model-img" onclick="switchMineImage(1)" style="background: #0284c7; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Strata Layer Model</button>
+                            <button class="scen-img-btn" id="btn-show-subsidence-img" onclick="switchMineImage(2)" style="background: #475569; color: white; border: none; padding: 5px 12px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Surface Sinkhole Collapse</button>
                         </div>
-                        <div class="facility-chip">
-                            <span class="facility-icon">🛢️</span>
-                            <span class="facility-name">Raw-Coal Silo</span>
-                        </div>
-                        <div class="facility-chip">
-                            <span class="facility-icon">🛗</span>
-                            <span class="facility-name">Elevator Shaft Head</span>
-                        </div>
-                        
-                        <!-- Surface Sensor Nodes Overlay -->
-                        <div class="surface-mesh-track">
-                            <span class="mesh-track-title">Surface Panel Sensor Mesh (1500m × 200m):</span>
-                            <div class="node-pin-badge" id="pin-n1">
+                    </div>
+
+                    <!-- Image Display Box with Sensor Overlay Pins -->
+                    <div style="position: relative; width: 100%; height: 360px; background: #1e293b; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img id="mine-cross-img-1" src="/static/images/mine_cross_section_1.png" alt="Mine Cross-Section Strata" style="width: 100%; height: 100%; object-fit: cover; display: block; transition: opacity 0.3s ease;">
+                        <img id="mine-cross-img-2" src="/static/images/mine_cross_section_2.png" alt="Mine Surface Sinkhole Collapse" style="width: 100%; height: 100%; object-fit: cover; display: none; transition: opacity 0.3s ease;">
+
+                        <!-- Floating Surface Panel Sensor Mesh Overlay -->
+                        <div class="surface-mesh-track" style="position: absolute; top: 12px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px); border: 2px solid #0284c7; padding: 8px 16px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
+                            <span class="mesh-track-title" style="color: #38bdf8; font-weight: 800;">Surface Panel Sensor Mesh (1500m × 200m):</span>
+                            <div class="node-pin-badge" id="pin-n1" style="background: rgba(255,255,255,0.95);">
                                 <span class="pin-dot-light"></span>
                                 <span class="pin-text">Slave N1 (Edge)</span>
                             </div>
-                            <div class="node-pin-badge" id="pin-n2">
+                            <div class="node-pin-badge" id="pin-n2" style="background: rgba(255,255,255,0.95);">
                                 <span class="pin-dot-light"></span>
                                 <span class="pin-text">Slave N2 (Mid)</span>
                             </div>
-                            <div class="node-pin-badge" id="pin-n3">
+                            <div class="node-pin-badge" id="pin-n3" style="background: rgba(255,255,255,0.95);">
                                 <span class="pin-dot-light"></span>
                                 <span class="pin-text">Slave N3 (Center-Max)</span>
                             </div>
-                            <div class="node-pin-badge" id="pin-n4">
+                            <div class="node-pin-badge" id="pin-n4" style="background: rgba(255,255,255,0.95);">
                                 <span class="pin-dot-light"></span>
                                 <span class="pin-text">Slave N4 (Mid)</span>
                             </div>
-                            <div class="node-pin-badge" id="pin-n5">
+                            <div class="node-pin-badge" id="pin-n5" style="background: rgba(255,255,255,0.95);">
                                 <span class="pin-dot-light"></span>
                                 <span class="pin-text">Slave N5 (Edge)</span>
                             </div>
                         </div>
-                    </div>
 
-                    <!-- Strata & Underground Layer -->
-                    <div class="schematic-strata-light">
-                        <div class="overburden-layer">
-                            Overburden Sandstone & Shale Strata Layers (Transmits Caving Strain Upward)
-                        </div>
-                        
-                        <div class="underground-grid">
-                            <!-- Elevator & Ventilation Shafts -->
-                            <div class="shaft-box">
-                                <div class="shaft-title">🛗 Elevator Shaft</div>
-                                <div style="color: var(--text-muted); font-size: 0.7rem;">Ventilation Shaft & Slope Access</div>
+                        <!-- GOB Zone Overlay Banner -->
+                        <div id="gob-zone" style="position: absolute; bottom: 12px; left: 20px; right: 20px; background: rgba(220, 38, 38, 0.9); color: white; padding: 8px 16px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #ef4444;">
+                            <div>
+                                <strong style="font-size: 0.85rem;">GOB ZONE (Collapsed Roof Void & Strata Deformation Trough)</strong><br>
+                                <span style="font-size: 0.72rem; opacity: 0.9;">Real-Time Underground Caving Strain Transmission</span>
                             </div>
-                            
-                            <!-- Slope Access Shaft -->
-                            <div class="shaft-box">
-                                <div class="shaft-title">⚙️ Haulage Slope</div>
-                                <div style="color: var(--text-muted); font-size: 0.7rem;">Coal Conveyor Belt Line ➔</div>
-                            </div>
-
-                            <!-- Underground Mining Panels -->
-                            <div class="mine-working-area">
-                                <div class="gob-zone-box" id="gob-zone">
-                                    <div>
-                                        <div class="gob-txt">GOB ZONE (Collapsed Roof Void)</div>
-                                        <div class="gob-subtxt">Active Caving Trough Area</div>
-                                    </div>
-                                    <span style="font-size: 0.8rem; font-weight: 700; color: #991b1b;">High Deformation Risk</span>
-                                </div>
-
-                                <div class="working-section">
-                                    <div class="section-machine">⚙️ Hydraulic Roof Support Shearer</div>
-                                    <span class="section-label">Longwall Mining Section</span>
-                                </div>
-
-                                <div class="working-section" style="background: #fef3c7; border-color: #fde047;">
-                                    <div class="section-machine" style="color: #b45309;">🚜 Continuous Miner Section</div>
-                                    <span class="section-label" style="color: #92400e;">Room & Pillar Extraction</span>
-                                </div>
-
-                                <div class="pillars-row">
-                                    <div class="coal-pillar-block">Coal Pillar</div>
-                                    <div class="coal-pillar-block">Coal Pillar</div>
-                                    <div class="coal-pillar-block">Coal Pillar</div>
-                                    <div class="coal-pillar-block">Coal Pillar</div>
-                                </div>
-                            </div>
+                            <span style="font-size: 0.75rem; font-weight: 800; background: white; color: #dc2626; padding: 3px 8px; border-radius: 4px;">HIGH RISK AREA</span>
                         </div>
                     </div>
                 </div>

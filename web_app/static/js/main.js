@@ -734,3 +734,22 @@ function initLiveHardwarePolling() {
         }
     }, 3000);
 }
+
+function switchMineImage(imgNum) {
+    const img1 = document.getElementById('mine-cross-img-1');
+    const img2 = document.getElementById('mine-cross-img-2');
+    const btn1 = document.getElementById('btn-show-model-img');
+    const btn2 = document.getElementById('btn-show-subsidence-img');
+
+    if (imgNum === 1) {
+        if (img1) img1.style.display = 'block';
+        if (img2) img2.style.display = 'none';
+        if (btn1) { btn1.style.background = '#0284c7'; btn1.style.color = '#ffffff'; }
+        if (btn2) { btn2.style.background = '#475569'; btn2.style.color = '#ffffff'; }
+    } else {
+        if (img1) img1.style.display = 'none';
+        if (img2) img2.style.display = 'block';
+        if (btn1) { btn1.style.background = '#475569'; btn1.style.color = '#ffffff'; }
+        if (btn2) { btn2.style.background = '#dc2626'; btn2.style.color = '#ffffff'; }
+    }
+}
