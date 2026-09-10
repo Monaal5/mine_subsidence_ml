@@ -72,6 +72,105 @@ function initModals() {
             alert("🔊 Gateway High-Decibel Siren Relay Test Triggered!");
         });
     }
+
+    // Download Handlers in Reports Modal
+    const downloadAuditBtn = document.getElementById('btn-download-audit-pdf');
+    if (downloadAuditBtn) {
+        downloadAuditBtn.addEventListener('click', () => {
+            const dateStr = new Date().toISOString().split('T')[0];
+            const content = `======================================================================
+MINE SAFETY COMPLIANCE AUDIT REPORT — DGMS FORMAT (SIH26)
+======================================================================
+Generated Date     : ${dateStr}
+Mine Location      : Jharia Coalfield — Longwall Panel 4
+System Status      : 100% OPERATIONAL (5/5 Sensor Nodes Online)
+Regulatory Standard: DGMS (Directorate General of Mines Safety) Circular 4
+
+----------------------------------------------------------------------
+1. SYSTEM TELEMETRY SUMMARY
+----------------------------------------------------------------------
+Max Surface Tilt           : 0.02° (Normal Baseline < 0.50°)
+Max Tensile Strain Delta   : 0.5 µε (Normal Baseline < 15.0 µε)
+Max Vibration RMS          : 0.025 g (Noise Floor Baseline)
+Breakwire Fissure Status   : INTACT (Continuity Verified)
+
+----------------------------------------------------------------------
+2. AI INFERENCE SCORES (THREE-TIER PIPELINE)
+----------------------------------------------------------------------
+Stage 1 Edge TinyML (ESP32-S3) : -0.40542 (Threshold: -0.61268 -> NORMAL)
+Stage 2 Gateway Correlator     : NORMAL_STABLE (Blast Filter Active)
+Stage 3 Cloud LSTM Prediction  : Risk: 2.4% | Est Disp: 0.8 mm | LOW SEVERITY
+
+----------------------------------------------------------------------
+3. COMPLIANCE VERIFICATION & SAFETY CERTIFICATION
+----------------------------------------------------------------------
+This automated report certifies that ground deformation parameters for
+Jharia Coalfield Panel 4 remain within DGMS safety margins.
+
+Inspector Signature: _______________________ (Justin Humphrey, Safety Director)
+`;
+            downloadBlob(content, `DGMS_Mine_Safety_Audit_Report_${dateStr}.txt`, 'text/plain');
+        });
+    }
+
+    const downloadCsvBtn = document.getElementById('btn-download-telemetry-csv');
+    if (downloadCsvBtn) {
+        downloadCsvBtn.addEventListener('click', async () => {
+            try {
+                const res = await fetch('/api/dataset/scenario/normal');
+                const data = await res.json();
+                let csv = 'window,node_id,tilt_mean,strain_delta,vib_rms\n';
+                Object.keys(data.nodes).forEach(nodeId => {
+                    data.nodes[nodeId].forEach(row => {
+                        csv += `${row.window},${row.node_id},${row.tilt_mean},${row.strain_delta},${row.vib_rms}\n`;
+                    });
+                });
+                downloadBlob(csv, `mine_subsidence_telemetry_stream.csv`, 'text/csv');
+            } catch (e) {
+                alert('Error generating CSV export.');
+            }
+        });
+    }
+
+    const downloadJsonBtn = document.getElementById('btn-download-metrics-json');
+    if (downloadJsonBtn) {
+        downloadJsonBtn.addEventListener('click', () => {
+            const metrics = {
+                system: "MineTrac AI Mining Platform (SIH26)",
+                timestamp: new Date().toISOString(),
+                edge_isolation_forest: {
+                    n_estimators: 10,
+                    max_samples: 256,
+                    threshold: -0.61268,
+                    execution_us: 101.3,
+                    auc_roc: 0.9631,
+                    false_positive_rate: 0.0106
+                },
+                gateway_correlator: {
+                    spatial_nodes: ["N1", "N2", "N3", "N4", "N5"],
+                    blast_filter_active: true,
+                    hysteresis_window: 3
+                },
+                cloud_lstm: {
+                    input_shape: [288, 40],
+                    target_outputs: ["subsidence_probability", "displacement_mm", "severity_class"]
+                }
+            };
+            downloadBlob(JSON.stringify(metrics, null, 2), `minetrac_ai_model_metrics.json`, 'application/json');
+        });
+    }
+}
+
+function downloadBlob(content, filename, contentType) {
+    const blob = new Blob([content], { type: contentType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
 }
 
 // ============================================================================

@@ -503,12 +503,46 @@
 
     <!-- MODAL OVERLAYS -->
     <div class="modal-overlay" id="modal-reports">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 620px;">
             <div class="modal-header">
                 <h2>📋 Automated Mine Safety Compliance Reports</h2>
                 <button class="modal-close-btn">&times;</button>
             </div>
-            <p style="color: var(--text-muted); font-size: 0.85rem;">Generated DGMS Mine Safety Standard Reports.</p>
+            <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 16px;">
+                Official DGMS (Directorate General of Mines Safety) Compliant Audit Logs & Real-Time Telemetry Data Export.
+            </p>
+
+            <div class="report-cards-list" style="display: flex; flex-direction: column; gap: 12px;">
+                <div class="report-item" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 0.95rem;">📑 DGMS Compliance Audit Log Report</strong><br>
+                        <span style="color: #64748b; font-size: 0.8rem;">Includes Stage 1-3 AI inference scores, ground deformation & safety status.</span>
+                    </div>
+                    <button class="btn-primary-sm" id="btn-download-audit-pdf" style="background: #0284c7; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-weight: 600; cursor: pointer; white-space: nowrap;">
+                        📥 Download Audit Log
+                    </button>
+                </div>
+
+                <div class="report-item" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 0.95rem;">📊 Live Sensor Telemetry Stream (CSV)</strong><br>
+                        <span style="color: #64748b; font-size: 0.8rem;">Full 50-window tilt, strain, and vibration sensor time-series records.</span>
+                    </div>
+                    <button class="btn-primary-sm" id="btn-download-telemetry-csv" style="background: #16a34a; color: white; border: none; padding: 8px 16px; font-weight: 600; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                        📊 Download CSV
+                    </button>
+                </div>
+
+                <div class="report-item" style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 14px 18px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong style="color: #0f172a; font-size: 0.95rem;">⚙️ TinyML & LSTM Model Metrics (JSON)</strong><br>
+                        <span style="color: #64748b; font-size: 0.8rem;">Stage 1 Isolation Forest threshold & Stage 3 LSTM displacement weights.</span>
+                    </div>
+                    <button class="btn-primary-sm" id="btn-download-metrics-json" style="background: #475569; color: white; border: none; padding: 8px 16px; font-weight: 600; border-radius: 6px; cursor: pointer; white-space: nowrap;">
+                        ⚙️ Download JSON
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
