@@ -1,5 +1,5 @@
 /**
- * MineTrac Official Light Theme Dashboard & Interactive Modals (SIH26)
+ * MineTrac Official LoadSwift-Style Dashboard JavaScript Logic (SIH26)
  * Single Page Application JavaScript Logic
  */
 
@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initScenarioChart();
     initDashboardPresets();
     initLiveHardwarePolling();
+    initFloatingCardTabs();
 });
 
 // ============================================================================
@@ -59,19 +60,6 @@ function initModals() {
             if (e.target === modal) modal.classList.remove('active');
         });
     });
-
-    // Test Siren Trigger in Modal
-    const testSirenBtn = document.getElementById('test-siren-trigger');
-    if (testSirenBtn) {
-        testSirenBtn.addEventListener('click', () => {
-            if (!audioCtx) {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-            }
-            playTestBeep();
-            alert("🔊 Gateway High-Decibel Siren Relay Test Triggered!");
-        });
-    }
 
     // Download Handlers in Reports Modal
     const downloadAuditBtn = document.getElementById('btn-download-audit-pdf');
@@ -269,25 +257,41 @@ function stopSirenSound() {
 }
 
 // ============================================================================
-// NAVIGATION TABS
+// NAVIGATION TABS (SIDEBAR + SECONDARY TAB BAR)
 // ============================================================================
 
 function initNavigation() {
-    const tabs = document.querySelectorAll('.sec-tab-btn');
+    const navBtns = document.querySelectorAll('.nav-item-btn[data-tab], .sec-tab-btn[data-tab]');
     const contents = document.querySelectorAll('.tab-content');
 
-    tabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-            tabs.forEach(t => t.classList.remove('active'));
-            contents.forEach(c => c.classList.remove('active'));
+    navBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const targetTab = btn.dataset.tab;
+            if (!targetTab) return;
 
-            tab.classList.add('active');
-            const targetId = `tab-${tab.dataset.tab}`;
-            const targetContent = document.getElementById(targetId);
+            document.querySelectorAll('.nav-item-btn[data-tab]').forEach(b => {
+                b.classList.toggle('active', b.dataset.tab === targetTab);
+            });
+            document.querySelectorAll('.sec-tab-btn[data-tab]').forEach(b => {
+                b.classList.toggle('active', b.dataset.tab === targetTab);
+            });
+
+            contents.forEach(c => c.classList.remove('active'));
+            const targetContent = document.getElementById(`tab-${targetTab}`);
             if (targetContent) {
                 targetContent.classList.add('active');
                 window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+        });
+    });
+}
+
+function initFloatingCardTabs() {
+    const flTabs = document.querySelectorAll('.fl-tab-btn');
+    flTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            flTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
         });
     });
 }
@@ -298,6 +302,7 @@ function initNavigation() {
 
 let map;
 let nodeMarkers = {};
+let baseLayers = {};
 
 const NODE_COORDS = {
     'N1': [23.792, 86.425],
@@ -308,11 +313,49 @@ const NODE_COORDS = {
 };
 
 function initGISMap() {
+    const mapElement = document.getElementById('gis-map');
+    if (!mapElement) return;
+
     map = L.map('gis-map').setView([23.795, 86.431], 15);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const streetLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
         attribution: '&copy; OpenStreetMap | MineTrac SIH26 Mesh'
-    }).addTo(map);
+    });
+
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and GIS User Community'
+    });
+
+    const topoLayer = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 17,
+        attribution: 'Map data: &copy; OpenStreetMap contributors, SRTM | Map style: &copy; OpenTopoMap'
+    });
+
+    baseLayers = {
+        'street': streetLayer,
+        'satellite': satelliteLayer,
+        'topo': topoLayer
+    };
+
+    streetLayer.addTo(map);
+
+    // Native Leaflet Control for Layers
+    L.control.layers({
+        "🏙️ Street Map": streetLayer,
+        "🛰️ Satellite Imagery": satelliteLayer,
+        "🏔️ Topo & Strata Grid": topoLayer
+    }, null, { position: 'topright' }).addTo(map);
+
+    // Header Toggle Button Listeners
+    const btnStreet = document.getElementById('btn-map-street');
+    const btnSat = document.getElementById('btn-map-satellite');
+    const btnLayers = document.getElementById('btn-map-layers');
+
+    if (btnStreet) btnStreet.addEventListener('click', () => switchTileLayer('street', btnStreet));
+    if (btnSat) btnSat.addEventListener('click', () => switchTileLayer('satellite', btnSat));
+    if (btnLayers) btnLayers.addEventListener('click', () => switchTileLayer('topo', btnLayers));
 
     Object.keys(NODE_COORDS).forEach(nodeId => {
         const coords = NODE_COORDS[nodeId];
@@ -320,12 +363,16 @@ function initGISMap() {
         
         const marker = L.circleMarker(coords, {
             radius: isCenter ? 12 : 8,
-            fillColor: "#16a34a",
+            fillColor: "#10b981",
             color: "#ffffff",
             weight: 2,
             opacity: 1,
             fillOpacity: 0.9
         }).addTo(map);
+
+        marker.on('click', () => {
+            updateFloatingOverlayNode(nodeId);
+        });
 
         marker.bindPopup(`
             <div style="color: #0f172a; font-family: sans-serif;">
@@ -339,49 +386,74 @@ function initGISMap() {
     });
 }
 
+function switchTileLayer(layerKey, activeBtn) {
+    if (!map || !baseLayers[layerKey]) return;
+
+    Object.values(baseLayers).forEach(layer => {
+        if (map.hasLayer(layer)) {
+            map.removeLayer(layer);
+        }
+    });
+
+    baseLayers[layerKey].addTo(map);
+
+    document.querySelectorAll('.map-toggle-btn').forEach(b => b.classList.remove('active'));
+    if (activeBtn) activeBtn.classList.add('active');
+}
+
+function updateFloatingOverlayNode(nodeId) {
+    const titleEl = document.getElementById('overlay-node-id');
+    const telEl = document.getElementById('fl-telemetry-txt');
+    const tinymlEl = document.getElementById('fl-tinyml-txt');
+    const cloudEl = document.getElementById('fl-cloud-txt');
+
+    if (titleEl) titleEl.textContent = `#${nodeId} (${nodeId === 'N3' ? 'Center-Max' : 'Surface Edge'})`;
+    if (telEl) telEl.textContent = `Pitch: 0.02° | Roll: 0.01° | Vib: 0.025g`;
+    if (tinymlEl) tinymlEl.textContent = `Isolation Forest Score: -0.472 (Normal)`;
+    if (cloudEl) cloudEl.textContent = `Est. Disp: 0.8 mm | Severity: LOW (2.4%)`;
+}
+
 function updateNodeMapColors(statusMap) {
     const colorMap = {
-        'normal': '#16a34a',
-        'warning': '#d97706',
-        'critical': '#dc2626',
-        'blast': '#9333ea'
+        'normal': '#10b981',
+        'warning': '#f59e0b',
+        'critical': '#ef4444',
+        'blast': '#8b5cf6'
     };
 
     Object.keys(statusMap).forEach(nodeId => {
         if (nodeMarkers[nodeId]) {
-            const color = colorMap[statusMap[nodeId]] || '#16a34a';
+            const color = colorMap[statusMap[nodeId]] || '#10b981';
             nodeMarkers[nodeId].setStyle({ fillColor: color });
         }
     });
 
-    const pinN3 = document.getElementById('pin-n3');
-    const gobZone = document.getElementById('gob-zone');
-    if (pinN3 && statusMap['N3']) {
-        const status = statusMap['N3'];
-        if (status === 'critical') {
-            pinN3.style.borderColor = '#dc2626';
-            if (gobZone) {
-                gobZone.style.borderColor = '#dc2626';
-                gobZone.style.background = 'rgba(153, 27, 27, 0.92)';
-            }
-        } else if (status === 'warning') {
-            pinN3.style.borderColor = '#d97706';
-            if (gobZone) {
-                gobZone.style.borderColor = '#d97706';
-                gobZone.style.background = 'rgba(146, 64, 14, 0.92)';
-            }
-        } else {
-            pinN3.style.borderColor = '#16a34a';
-            if (gobZone) {
-                gobZone.style.borderColor = '#dc2626';
-                gobZone.style.background = 'rgba(15, 23, 42, 0.92)';
-            }
-        }
+    const status = statusMap['N3'] || 'normal';
+    const telEl = document.getElementById('fl-telemetry-txt');
+    const tinymlEl = document.getElementById('fl-tinyml-txt');
+    const cloudEl = document.getElementById('fl-cloud-txt');
+
+    if (status === 'critical') {
+        if (telEl) telEl.textContent = 'Pitch: 1.45° | Roll: 0.82° | Crack wire BROKEN';
+        if (tinymlEl) tinymlEl.textContent = 'Isolation Forest Score: -0.785 (CRITICAL ANOMALY)';
+        if (cloudEl) cloudEl.textContent = 'Est. Disp: 42.5 mm | Severity: HIGH (94.2%)';
+    } else if (status === 'warning') {
+        if (telEl) telEl.textContent = 'Pitch: 0.25° | Roll: 0.12° | Strain 8.5 µε';
+        if (tinymlEl) tinymlEl.textContent = 'Isolation Forest Score: -0.590 (WARNING)';
+        if (cloudEl) cloudEl.textContent = 'Est. Disp: 12.4 mm | Severity: MEDIUM (45.0%)';
+    } else if (status === 'blast') {
+        if (telEl) telEl.textContent = 'Pitch: 0.02° | Roll: 0.01° | Vib Peak: 2.10g';
+        if (tinymlEl) tinymlEl.textContent = 'Isolation Forest Score: -0.450 (BLAST TRANSIENT)';
+        if (cloudEl) cloudEl.textContent = 'Est. Disp: 0.0 mm | Blast Filter Active';
+    } else {
+        if (telEl) telEl.textContent = 'Pitch: 0.02° | Roll: 0.01° | Vib: 0.025g';
+        if (tinymlEl) tinymlEl.textContent = 'Isolation Forest Score: -0.472 (Normal)';
+        if (cloudEl) cloudEl.textContent = 'Est. Disp: 0.8 mm | Severity: LOW (2.4%)';
     }
 }
 
 // ============================================================================
-// LIVE TELEMETRY CHART (Light Theme)
+// LIVE TELEMETRY CHART
 // ============================================================================
 
 let liveChart;
@@ -400,8 +472,8 @@ function initLiveChart() {
             datasets: [
                 {
                     label: 'N3 Center Tilt (°)',
-                    borderColor: '#dc2626',
-                    backgroundColor: 'rgba(220, 38, 38, 0.08)',
+                    borderColor: '#ef4444',
+                    backgroundColor: 'rgba(239, 68, 68, 0.08)',
                     data: Array(30).fill(0.02),
                     tension: 0.3,
                     fill: true
@@ -419,7 +491,7 @@ function initLiveChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#1e293b', font: { weight: '600' } } } },
+            plugins: { legend: { labels: { color: '#0f172a', font: { weight: '600' } } } },
             scales: {
                 x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } },
                 y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } }
@@ -668,15 +740,15 @@ function initScenarioChart() {
         data: {
             labels: Array.from({length: 50}, (_, i) => `Window ${i+1}`),
             datasets: [
-                { label: 'N3 Center Tilt (°)', borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.08)', data: [], fill: true },
-                { label: 'N3 Strain Delta (µε)', borderColor: '#d97706', backgroundColor: 'rgba(217, 119, 6, 0.08)', data: [], fill: true },
-                { label: 'N3 Vibration RMS (g)', borderColor: '#9333ea', backgroundColor: 'rgba(147, 51, 234, 0.08)', data: [], fill: true }
+                { label: 'N3 Center Tilt (°)', borderColor: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.08)', data: [], fill: true },
+                { label: 'N3 Strain Delta (µε)', borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.08)', data: [], fill: true },
+                { label: 'N3 Vibration RMS (g)', borderColor: '#8b5cf6', backgroundColor: 'rgba(139, 92, 246, 0.08)', data: [], fill: true }
             ]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: { legend: { labels: { color: '#1e293b', font: { weight: '600' } } } },
+            plugins: { legend: { labels: { color: '#0f172a', font: { weight: '600' } } } },
             scales: {
                 x: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } },
                 y: { grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#64748b' } }
@@ -722,7 +794,7 @@ function initLiveHardwarePolling() {
             Object.keys(liveNodes).forEach(nodeId => {
                 const info = liveNodes[nodeId];
                 if (nodeMarkers[nodeId]) {
-                    const color = info.stale ? '#94a3b8' : (info.is_anomalous ? '#dc2626' : '#16a34a');
+                    const color = info.stale ? '#94a3b8' : (info.is_anomalous ? '#ef4444' : '#10b981');
                     const statusText = info.stale ? 'OFFLINE / STALE' : (info.is_anomalous ? 'ALERT / ANOMALY' : 'NORMAL');
                     nodeMarkers[nodeId].setStyle({ fillColor: color });
                     nodeMarkers[nodeId].setPopupContent(`
@@ -750,25 +822,25 @@ function switchMineImage(imgNum) {
     const btn3 = document.getElementById('btn-show-subsidence-img');
 
     if (imgNum === 1) {
-        if (img1) img1.style.display = 'block';
-        if (img2) img2.style.display = 'none';
-        if (img3) img3.style.display = 'none';
-        if (btn1) { btn1.style.background = '#0284c7'; btn1.style.color = '#ffffff'; }
-        if (btn2) { btn2.style.background = '#334155'; btn2.style.color = '#94a3b8'; }
-        if (btn3) { btn3.style.background = '#334155'; btn3.style.color = '#94a3b8'; }
+        if (img1) img1.classList.add('active');
+        if (img2) img2.classList.remove('active');
+        if (img3) img3.classList.remove('active');
+        if (btn1) btn1.classList.add('active');
+        if (btn2) btn2.classList.remove('active');
+        if (btn3) btn3.classList.remove('active');
     } else if (imgNum === 2) {
-        if (img1) img1.style.display = 'none';
-        if (img2) img2.style.display = 'block';
-        if (img3) img3.style.display = 'none';
-        if (btn1) { btn1.style.background = '#334155'; btn1.style.color = '#94a3b8'; }
-        if (btn2) { btn2.style.background = '#0284c7'; btn2.style.color = '#ffffff'; }
-        if (btn3) { btn3.style.background = '#334155'; btn3.style.color = '#94a3b8'; }
+        if (img1) img1.classList.remove('active');
+        if (img2) img2.classList.add('active');
+        if (img3) img3.classList.remove('active');
+        if (btn1) btn1.classList.remove('active');
+        if (btn2) btn2.classList.add('active');
+        if (btn3) btn3.classList.remove('active');
     } else if (imgNum === 3) {
-        if (img1) img1.style.display = 'none';
-        if (img2) img2.style.display = 'none';
-        if (img3) img3.style.display = 'block';
-        if (btn1) { btn1.style.background = '#334155'; btn1.style.color = '#94a3b8'; }
-        if (btn2) { btn2.style.background = '#334155'; btn2.style.color = '#94a3b8'; }
-        if (btn3) { btn3.style.background = '#dc2626'; btn3.style.color = '#ffffff'; }
+        if (img1) img1.classList.remove('active');
+        if (img2) img2.classList.remove('active');
+        if (img3) img3.classList.add('active');
+        if (btn1) btn1.classList.remove('active');
+        if (btn2) btn2.classList.remove('active');
+        if (btn3) btn3.classList.add('active');
     }
 }

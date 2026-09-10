@@ -15,60 +15,102 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <!-- 1. MineTrac Official Top Header -->
-    <header class="minetrac-top-bar">
-        <div class="brand-section">
-            <div class="brand-logo-mark">
-                <div class="logo-m-icon">M</div>
-                <div class="logo-text-wrap">
-                    <h1>MineTrac</h1>
-                    <span>BY AKSSAI ProjExcel | SIH26 Coalition</span>
+    <div class="dashboard-layout">
+
+        <!-- ===================================================================
+             1. DARK LEFT SIDEBAR NAVIGATION (LoadSwift Inspired)
+             =================================================================== -->
+        <aside class="sidebar-dark">
+            <!-- Brand Section -->
+            <div class="sidebar-brand">
+                <div class="brand-logo-mark">
+                    <div class="logo-m-icon">M</div>
+                    <div class="logo-text-wrap">
+                        <h2>MineTrac</h2>
+                        <span>SIH26 COALITION AI</span>
+                    </div>
                 </div>
+                <button class="sidebar-collapse-btn" title="Toggle Sidebar">«</button>
             </div>
-        </div>
 
-        <!-- Center Top Navigation Links -->
-        <div class="top-nav-links">
-            <button class="top-link-btn" id="nav-btn-reports"><span>📋</span> Reports</button>
-            <button class="top-link-btn" id="nav-btn-nodes"><span>👥</span> All Mesh Nodes</button>
-            <button class="top-link-btn" id="nav-btn-safety"><span>🛡️</span> Safety Rules</button>
-            <button class="top-link-btn" id="nav-btn-config"><span>⚙️</span> Master Config</button>
-            
-            <!-- Siren Audio Control Toggle -->
-            <button id="btn-siren-toggle" class="siren-toggle-btn muted">
-                <span id="siren-icon">🔇</span>
-                <span id="siren-btn-text">Audio Siren: MUTED</span>
-            </button>
-        </div>
+            <!-- Navigation Links Menu -->
+            <nav class="sidebar-menu">
+                <div class="menu-section-label">MAIN MONITORING</div>
+                
+                <button class="nav-item-btn active" data-tab="dashboard">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-label">Dashboard</span>
+                    <span class="nav-badge badge-green">LIVE</span>
+                </button>
 
-        <!-- User Profile Avatar -->
-        <div class="user-profile-badge">
-            <div class="user-avatar">JH</div>
-            <div class="user-info">
-                <span class="user-name">Justin Humphrey</span>
-                <span class="user-role">Safety Director (Jharia Panel 4)</span>
+                <button class="nav-item-btn" data-tab="simulator">
+                    <span class="nav-icon">🎛️</span>
+                    <span class="nav-label">ML Test Bench</span>
+                    <span class="nav-badge badge-yellow">3-Tier</span>
+                </button>
+
+                <button class="nav-item-btn" data-tab="scenarios">
+                    <span class="nav-icon">🎬</span>
+                    <span class="nav-label">90-Day Scenarios</span>
+                    <span class="nav-badge badge-purple">4 Phase</span>
+                </button>
+
+                <button class="nav-item-btn" data-tab="guide">
+                    <span class="nav-icon">📖</span>
+                    <span class="nav-label">Hardware Guide</span>
+                </button>
+
+                <div class="menu-section-label">MANAGEMENT & SAFETY</div>
+
+                <button class="nav-item-btn" id="nav-btn-reports">
+                    <span class="nav-icon">📋</span>
+                    <span class="nav-label">Audit Reports</span>
+                </button>
+
+                <button class="nav-item-btn" id="nav-btn-nodes">
+                    <span class="nav-icon">📡</span>
+                    <span class="nav-label">All Mesh Nodes</span>
+                    <span class="nav-badge badge-cyan">5 Online</span>
+                </button>
+
+                <button class="nav-item-btn" id="nav-btn-safety">
+                    <span class="nav-icon">🛡️</span>
+                    <span class="nav-label">Safety Rules</span>
+                </button>
+
+                <button class="nav-item-btn" id="nav-btn-config">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-label">Master Config</span>
+                </button>
+            </nav>
+
+            <!-- Bottom User Profile Card -->
+            <div class="sidebar-user-card">
+                <div class="user-avatar-circle">JH</div>
+                <div class="user-details">
+                    <span class="user-name">Justin Humphrey</span>
+                    <span class="user-role">Safety Director • Jharia 4</span>
+                </div>
+                <button class="user-settings-icon" title="Account Settings">⚙️</button>
             </div>
-        </div>
-    </header>
+        </aside>
 
-    <!-- 2. Secondary Tab Bar with Active Red Underline -->
-    <nav class="secondary-tab-bar">
-        <button class="sec-tab-btn active" data-tab="dashboard">Dashboard</button>
-        <button class="sec-tab-btn" data-tab="simulator">ML Test Bench (3-Tier ML)</button>
-        <button class="sec-tab-btn" data-tab="scenarios">90-Day Simulation & Scenarios</button>
-        <button class="sec-tab-btn" data-tab="guide">Hardware & Flashing Guide</button>
-    </nav>
+        <!-- ===================================================================
+             2. MAIN WORKSPACE CONTAINER
+             =================================================================== -->
+        <div class="main-workspace">
 
-    <!-- 3. Main Content Container -->
-    <div class="app-container main-wrapper">
+            <!-- Top Header Search & Filter Bar -->
+            <header class="top-workspace-header">
+                <div class="header-left">
+                    <div class="search-input-wrap">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" id="global-search" placeholder="Search sensor nodes, telemetry streams, alerts..." />
+                    </div>
+                </div>
 
-        <!-- TAB 1: LIVE DASHBOARD -->
-        <main class="tab-content active" id="tab-dashboard">
-            <!-- Filter Bar Row -->
-            <div class="filter-row-bar">
-                <div class="filter-left">
-                    <h2 class="page-title">Dashboard</h2>
-                    <div class="select-group">
+                <div class="header-right">
+                    <div class="filter-select-group">
                         <select id="sel-mine-location">
                             <option value="jharia_longwall_4">Jharia Coalfield — Longwall Panel 4</option>
                             <option value="raniganj_panel_2">Raniganj Underground — Panel 2</option>
@@ -76,394 +118,470 @@
                         </select>
                         <input type="date" id="sel-date" value="2026-03-09">
                     </div>
-                </div>
 
-                <div class="filter-controls">
-                    <span class="m-subtitle" style="color: var(--success);">🟢 Master Gateway Online</span>
+                    <div class="status-pill-green">
+                        <span class="dot-pulse"></span> Master Gateway Online
+                    </div>
+
+                    <button id="btn-siren-toggle" class="siren-toggle-btn muted">
+                        <span id="siren-icon">🔇</span>
+                        <span id="siren-btn-text">Audio Siren: MUTED</span>
+                    </button>
                 </div>
+            </header>
+
+            <!-- Secondary Navigation Tab Bar (Dynamic view switcher) -->
+            <div class="tab-indicator-bar">
+                <button class="sec-tab-btn active" data-tab="dashboard">Overview Dashboard</button>
+                <button class="sec-tab-btn" data-tab="simulator">Interactive ML Test Bench</button>
+                <button class="sec-tab-btn" data-tab="scenarios">90-Day Mining Simulation</button>
+                <button class="sec-tab-btn" data-tab="guide">Firmware & Hardware Deployment</button>
             </div>
 
-            <!-- Summary Metric Cards -->
-            <div class="metrics-grid-4">
-                <div class="metric-card-light">
-                    <div class="metric-icon-circle icon-green">📡</div>
-                    <div class="metric-body">
-                        <span class="m-title">Active Mesh Nodes</span>
-                        <span class="m-value" id="m-nodes">5 / 5 Online</span>
-                        <span class="m-subtitle text-green-dark">100% Radio Signal</span>
-                    </div>
-                </div>
-                <div class="metric-card-light">
-                    <div class="metric-icon-circle icon-orange">📐</div>
-                    <div class="metric-body">
-                        <span class="m-title">Max Surface Tilt</span>
-                        <span class="m-value" id="m-tilt">0.02°</span>
-                        <span class="m-subtitle" id="m-tilt-sub" style="color: var(--text-muted);">Normal Baseline</span>
-                    </div>
-                </div>
-                <div class="metric-card-light">
-                    <div class="metric-icon-circle icon-blue">🔩</div>
-                    <div class="metric-body">
-                        <span class="m-title">Max Strain Stress Delta</span>
-                        <span class="m-value" id="m-strain">0.5 µε</span>
-                        <span class="m-subtitle" id="m-strain-sub" style="color: var(--text-muted);">Tensile Normal</span>
-                    </div>
-                </div>
-                <div class="metric-card-light">
-                    <div class="metric-icon-circle icon-red">⚠️</div>
-                    <div class="metric-body">
-                        <span class="m-title">Subsidence Risk %</span>
-                        <span class="m-value" id="m-risk">2.4%</span>
-                        <span class="m-subtitle text-green-dark" id="m-risk-sub">SAFE_STABLE</span>
-                    </div>
-                </div>
-            </div>
+            <!-- Content Area for Active Tab -->
+            <div class="app-body-content">
 
-            <!-- Test Preset Chips Row -->
-            <div class="presets-bar">
-                <span class="presets-label">🧪 Test Scenarios:</span>
-                <button class="preset-chip chip-normal" id="db-preset-1">Case 1: Normal Operation</button>
-                <button class="preset-chip chip-warning" id="db-preset-2">Case 2: Pre-Subsidence Creep</button>
-                <button class="preset-chip chip-danger" id="db-preset-3">Case 3: Active Subsidence (Audio Siren Fire!)</button>
-                <button class="preset-chip chip-purple" id="db-preset-4">Case 4: Explosive Blasting</button>
-                <button class="preset-chip chip-orange" id="db-preset-5">Case 5: Breakwire Trip</button>
-            </div>
+                <!-- TAB 1: LIVE DASHBOARD -->
+                <main class="tab-content active" id="tab-dashboard">
 
-            <!-- ANATOMICAL UNDERGROUND MINE CUTAWAY SCHEMATIC WITH CALLOUT LINES -->
-            <div class="card-light schematic-card-light">
-                <div class="card-header-light">
-                    <h2>🏗️ Underground Longwall Mine Cross-Section & Sensor Mesh Overlay</h2>
-                    <span class="badge-light">Geomechanical Panel Cross-Section</span>
-                </div>
-
-                <div class="schematic-box" style="border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #0f172a;">
-                    <!-- Card Top Header with Toggle for All 3 Images -->
-                    <div style="background: #0f172a; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
-                        <span style="color: #f8fafc; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
-                            <span>⛏️</span> Geological Cross-Section Visualizer (Geomechanical Strata Model)
-                        </span>
-                        <div style="display: flex; gap: 8px;">
-                            <button class="scen-img-btn active" id="btn-show-model-img" onclick="switchMineImage(1)" style="background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Strata Layer Model</button>
-                            <button class="scen-img-btn" id="btn-show-sandbox-img" onclick="switchMineImage(2)" style="background: #334155; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Physical Sandbox Model</button>
-                            <button class="scen-img-btn" id="btn-show-subsidence-img" onclick="switchMineImage(3)" style="background: #334155; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Surface Sinkhole Collapse</button>
+                    <!-- Summary KPI Metric Cards (LoadSwift Style) -->
+                    <div class="metrics-grid-4">
+                        <div class="metric-card-sleek">
+                            <div class="metric-header-row">
+                                <span class="m-title">Active Mesh Nodes</span>
+                                <div class="metric-icon-circle icon-green">📡</div>
+                            </div>
+                            <div class="m-value" id="m-nodes">5 / 5 Online</div>
+                            <div class="metric-footer-row">
+                                <span class="m-tag tag-green">🟢 100% Radio Signal</span>
+                            </div>
                         </div>
-                    </div>
 
-                    <!-- Sensor Nodes Control Track Bar -->
-                    <div style="background: #1e293b; padding: 10px 20px; border-bottom: 1px solid #334155; display: flex; align-items: center; justify-content: space-between;">
-                        <span style="color: #38bdf8; font-weight: 800; font-size: 0.8rem;">Surface Panel Sensor Mesh (1500m × 200m):</span>
-                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                            <div class="node-pin-badge" id="pin-n1" style="background: #ffffff; border: 1.5px solid #16a34a; padding: 3px 10px; border-radius: 12px;">
-                                <span class="pin-dot-light" style="width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-                                <span class="pin-text" style="font-size: 0.75rem; font-weight: 700; color: #0f172a;">Slave N1 (Edge)</span>
+                        <div class="metric-card-sleek">
+                            <div class="metric-header-row">
+                                <span class="m-title">Max Surface Tilt</span>
+                                <div class="metric-icon-circle icon-orange">📐</div>
                             </div>
-                            <div class="node-pin-badge" id="pin-n2" style="background: #ffffff; border: 1.5px solid #16a34a; padding: 3px 10px; border-radius: 12px;">
-                                <span class="pin-dot-light" style="width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-                                <span class="pin-text" style="font-size: 0.75rem; font-weight: 700; color: #0f172a;">Slave N2 (Mid)</span>
+                            <div class="m-value" id="m-tilt">0.02°</div>
+                            <div class="metric-footer-row">
+                                <span class="m-tag tag-muted" id="m-tilt-sub">Normal Baseline</span>
                             </div>
-                            <div class="node-pin-badge" id="pin-n3" style="background: #ffffff; border: 1.5px solid #16a34a; padding: 3px 10px; border-radius: 12px;">
-                                <span class="pin-dot-light" style="width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-                                <span class="pin-text" style="font-size: 0.75rem; font-weight: 700; color: #0f172a;">Slave N3 (Center-Max)</span>
+                        </div>
+
+                        <div class="metric-card-sleek">
+                            <div class="metric-header-row">
+                                <span class="m-title">Max Strain Stress Delta</span>
+                                <div class="metric-icon-circle icon-blue">🔩</div>
                             </div>
-                            <div class="node-pin-badge" id="pin-n4" style="background: #ffffff; border: 1.5px solid #16a34a; padding: 3px 10px; border-radius: 12px;">
-                                <span class="pin-dot-light" style="width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-                                <span class="pin-text" style="font-size: 0.75rem; font-weight: 700; color: #0f172a;">Slave N4 (Mid)</span>
+                            <div class="m-value" id="m-strain">0.5 µε</div>
+                            <div class="metric-footer-row">
+                                <span class="m-tag tag-blue" id="m-strain-sub">Tensile Normal</span>
                             </div>
-                            <div class="node-pin-badge" id="pin-n5" style="background: #ffffff; border: 1.5px solid #16a34a; padding: 3px 10px; border-radius: 12px;">
-                                <span class="pin-dot-light" style="width: 8px; height: 8px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-                                <span class="pin-text" style="font-size: 0.75rem; font-weight: 700; color: #0f172a;">Slave N5 (Edge)</span>
+                        </div>
+
+                        <div class="metric-card-sleek">
+                            <div class="metric-header-row">
+                                <span class="m-title">Subsidence Risk %</span>
+                                <div class="metric-icon-circle icon-red">⚠️</div>
+                            </div>
+                            <div class="m-value" id="m-risk">2.4%</div>
+                            <div class="metric-footer-row">
+                                <span class="m-tag tag-green" id="m-risk-sub">SAFE_STABLE</span>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Image Display Container (Full-Width Edge-to-Edge View) -->
-                    <div style="position: relative; width: 100%; height: 420px; background: #070a12; display: flex; align-items: center; justify-content: center; padding: 0; overflow: hidden;">
-                        <img id="mine-cross-img-1" src="/static/images/mine_cross_section_1.png" alt="Mine Cross-Section Strata" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
-                        <img id="mine-cross-img-2" src="/static/images/mine_cross_section_2.png" alt="Mine Physical Sandbox Model" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: none;">
-                        <img id="mine-cross-img-3" src="/static/images/mine_cross_section_3.png" alt="Mine Surface Sinkhole Collapse" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: none;">
+                    <!-- Test Preset Scenarios Chips Row -->
+                    <div class="presets-bar-sleek">
+                        <span class="presets-label">🧪 Test Scenarios:</span>
+                        <div class="chips-flex">
+                            <button class="preset-chip chip-normal" id="db-preset-1">Case 1: Normal Operation</button>
+                            <button class="preset-chip chip-warning" id="db-preset-2">Case 2: Pre-Subsidence Creep</button>
+                            <button class="preset-chip chip-danger" id="db-preset-3">Case 3: Active Subsidence (Audio Siren Fire!)</button>
+                            <button class="preset-chip chip-purple" id="db-preset-4">Case 4: Explosive Blasting</button>
+                            <button class="preset-chip chip-orange" id="db-preset-5">Case 5: Breakwire Trip</button>
+                        </div>
+                    </div>
 
-                        <!-- Crisp High-Contrast Bottom GOB Zone Banner -->
-                        <div id="gob-zone" style="position: absolute; bottom: 14px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(6px); border-left: 5px solid #dc2626; border-radius: 6px; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+                    <!-- Main Dashboard Split Layout (Middle Content + Right Map & Tracking Overlay) -->
+                    <div class="dashboard-split-grid">
+
+                        <!-- LEFT / MIDDLE COLUMN -->
+                        <div class="left-split-col">
+
+                            <!-- Clean Geological Cross-Section Visualizer (REMOVED surface panel mesh & GOB zone overlay) -->
+                            <div class="card-sleek schematic-card-container">
+                                <div class="card-header-sleek">
+                                    <div>
+                                        <h2>⛏️ Geological Cross-Section Visualizer</h2>
+                                        <span class="card-subtitle">Geomechanical Strata Model</span>
+                                    </div>
+                                    <div class="model-toggle-btns">
+                                        <button class="scen-img-btn active" id="btn-show-model-img" onclick="switchMineImage(1)">Strata Layer Model</button>
+                                        <button class="scen-img-btn" id="btn-show-sandbox-img" onclick="switchMineImage(2)">Physical Sandbox Model</button>
+                                        <button class="scen-img-btn" id="btn-show-subsidence-img" onclick="switchMineImage(3)">Surface Sinkhole Collapse</button>
+                                    </div>
+                                </div>
+
+                                <div class="schematic-view-wrapper">
+                                    <img id="mine-cross-img-1" src="/static/images/mine_cross_section_1.png" alt="Mine Cross-Section Strata" class="schematic-img active">
+                                    <img id="mine-cross-img-2" src="/static/images/mine_cross_section_2.png" alt="Mine Physical Sandbox Model" class="schematic-img">
+                                    <img id="mine-cross-img-3" src="/static/images/mine_cross_section_3.png" alt="Mine Surface Sinkhole Collapse" class="schematic-img">
+                                </div>
+                            </div>
+
+                            <!-- Live Risk Gauge & Alerts Card -->
+                            <div class="card-sleek">
+                                <div class="card-header-sleek">
+                                    <div>
+                                        <h2>🚨 Gateway Early Warning Status</h2>
+                                        <span class="card-subtitle">Real-Time Correlator Evaluation</span>
+                                    </div>
+                                    <span class="badge-sleek-green">Gateway Active</span>
+                                </div>
+                                
+                                <div class="gauge-wrapper-sleek">
+                                    <div class="gauge-val-text" id="overall-risk-val">0.02</div>
+                                    <div class="gauge-lbl-text">Subsidence Risk Index (0.00 Safe – 1.00 Critical)</div>
+                                    <div class="bar-bg-sleek">
+                                        <div class="bar-fill-sleek" id="risk-bar" style="width: 2%;"></div>
+                                    </div>
+                                </div>
+
+                                <div class="alert-panel normal" id="alert-box">
+                                    <div class="alert-ic" id="alert-icon">🟢</div>
+                                    <div class="alert-txt">
+                                        <h3 id="alert-title">NORMAL_STABLE</h3>
+                                        <p id="alert-msg">All ground tilt and digital strain indicators are within safe limits.</p>
+                                    </div>
+                                </div>
+
+                                <div class="quick-stats-grid">
+                                    <div class="stat-box">
+                                        <span class="stat-v" id="stat-max-tilt">0.02°</span>
+                                        <span class="stat-l">Max Surface Tilt</span>
+                                    </div>
+                                    <div class="stat-box">
+                                        <span class="stat-v" id="stat-max-strain">0.5 µε</span>
+                                        <span class="stat-l">Max Strain Delta</span>
+                                    </div>
+                                    <div class="stat-box">
+                                        <span class="stat-v" id="stat-disp">0.0 mm</span>
+                                        <span class="stat-l">Est. Displacement</span>
+                                    </div>
+                                    <div class="stat-box">
+                                        <span class="stat-v" id="stat-siren">MUTED</span>
+                                        <span class="stat-l">Physical Siren</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Real-Time Telemetry Stream Chart -->
+                            <div class="card-sleek">
+                                <div class="card-header-sleek">
+                                    <div>
+                                        <h2>📈 Real-Time Multi-Sensor Telemetry Streams</h2>
+                                        <span class="card-subtitle">Continuous Mesh Node Sensors</span>
+                                    </div>
+                                    <div class="chart-filter-btns">
+                                        <button class="btn-sm primary" id="btn-chart-tilt">Tilt Angle</button>
+                                        <button class="btn-sm" id="btn-chart-strain">Strain Delta</button>
+                                        <button class="btn-sm" id="btn-chart-vib">Vibration RMS</button>
+                                    </div>
+                                </div>
+                                <div class="chart-box-sleek">
+                                    <canvas id="liveChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- RIGHT COLUMN: GIS MAP WITH LOADSWIFT-STYLE FLOATING TRACKING CARD -->
+                        <div class="right-split-col">
+                            <div class="card-sleek map-card-container">
+                                <div class="card-header-sleek">
+                                    <div>
+                                        <h2>🗺️ Surface Panel GIS Grid (Leaflet Map)</h2>
+                                        <span class="card-subtitle">Jharia Coalfield GPS Coordinates</span>
+                                    </div>
+                                    <div class="map-view-toggles">
+                                        <button class="map-toggle-btn active" id="btn-map-street">Map</button>
+                                        <button class="map-toggle-btn" id="btn-map-satellite">Satellite</button>
+                                        <button class="map-toggle-btn" id="btn-map-layers">Layers / Topo</button>
+                                    </div>
+                                </div>
+
+                                <!-- Leaflet Map Box with Relative Position for Floating Tracking Overlay Card -->
+                                <div class="map-box-relative">
+                                    <div id="gis-map" class="map-canvas"></div>
+
+                                    <!-- LOADSWIFT INSPIRED FLOATING TRACKING OVERLAY CARD -->
+                                    <div class="map-floating-tracking-card" id="map-tracking-card">
+                                        <div class="floating-card-header">
+                                            <div class="node-id-title">Node: <span id="overlay-node-id">#N3 (Center)</span></div>
+                                            <div class="card-action-icons">
+                                                <button title="Copy Coordinates">📋</button>
+                                                <button title="Edit Thresholds">✏️</button>
+                                                <button title="Close Overlay">✕</button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Card Navigation Tabs -->
+                                        <div class="floating-card-tabs">
+                                            <button class="fl-tab-btn" data-fl-tab="info">Node Info</button>
+                                            <button class="fl-tab-btn active" data-fl-tab="tracking">Tracking</button>
+                                            <button class="fl-tab-btn" data-fl-tab="inference">ML Pipeline</button>
+                                        </div>
+
+                                        <!-- Stepper Content (Tracking Timeline) -->
+                                        <div class="floating-card-body">
+                                            <div class="tracking-stepper">
+                                                <div class="step-item step-completed">
+                                                    <div class="step-marker dot-blue"></div>
+                                                    <div class="step-info">
+                                                        <strong>Mesh Sensor Ingest</strong>
+                                                        <span id="fl-telemetry-txt">Pitch: 0.02° | Roll: 0.01° | Vib: 0.025g</span>
+                                                        <span class="step-time">15.08.2026 at 10:00 AM</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="step-item step-active">
+                                                    <div class="step-marker dot-blue"></div>
+                                                    <div class="step-info">
+                                                        <strong>Stage 1 TinyML (ESP32-S3)</strong>
+                                                        <span id="fl-tinyml-txt">Isolation Forest Score: -0.472 (Normal)</span>
+                                                        <span class="step-time">Latency: 112 µs</span>
+                                                    </div>
+                                                </div>
+
+                                                <div class="step-item step-upcoming">
+                                                    <div class="step-marker dot-dark"></div>
+                                                    <div class="step-info">
+                                                        <strong>Stage 2 Gateway & Stage 3 Cloud</strong>
+                                                        <span id="fl-cloud-txt">Est. Disp: 0.8 mm | Sev: LOW (2.4%)</span>
+                                                        <span class="step-time">Status: SAFE_STABLE</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="map-legend-sleek">
+                                    <span><i class="dot-light normal"></i> Normal</span>
+                                    <span><i class="dot-light warning"></i> Pre-Subsidence</span>
+                                    <span><i class="dot-light critical"></i> Active Alert</span>
+                                    <span><i class="dot-light blast"></i> Blast Filtered</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </main>
+
+                <!-- TAB 2: INTERACTIVE ML TEST BENCH -->
+                <main class="tab-content" id="tab-simulator">
+                    <div class="grid-2col">
+                        <!-- Input Panel -->
+                        <div class="card-sleek">
+                            <div class="card-header-sleek">
+                                <div>
+                                    <h2>🎛️ Sensor Controls (Center Node N3)</h2>
+                                    <span class="card-subtitle">Adjust real-time parameters</span>
+                                </div>
+                                <div class="filter-controls">
+                                    <button class="btn-sm primary" id="btn-preset-normal">Normal</button>
+                                    <button class="btn-sm warning" id="btn-preset-pre">Pre-Subsidence</button>
+                                    <button class="btn-sm danger" id="btn-preset-active">Active</button>
+                                    <button class="btn-sm purple" id="btn-preset-blast">Blast</button>
+                                </div>
+                            </div>
+
+                            <div class="sliders-2col">
+                                <div class="field-group">
+                                    <label>Tilt Mean (°): <span class="val-txt" id="lbl-tilt">0.02°</span></label>
+                                    <input type="range" id="input-tilt" min="0" max="3.0" step="0.01" value="0.02">
+                                </div>
+                                <div class="field-group">
+                                    <label>Tilt Rate (°/min): <span class="val-txt" id="lbl-tilt-rate">0.0000</span></label>
+                                    <input type="range" id="input-tilt-rate" min="-0.05" max="0.05" step="0.001" value="0.0001">
+                                </div>
+                                <div class="field-group">
+                                    <label>Strain Delta (µε): <span class="val-txt" id="lbl-strain">0.5 µε</span></label>
+                                    <input type="range" id="input-strain" min="-5" max="60" step="0.5" value="0.5">
+                                </div>
+                                <div class="field-group">
+                                    <label>Vibration RMS (g): <span class="val-txt" id="lbl-vib-rms">0.025g</span></label>
+                                    <input type="range" id="input-vib-rms" min="0.0" max="2.0" step="0.01" value="0.025">
+                                </div>
+                                <div class="field-group">
+                                    <label>Vibration Peak (g): <span class="val-txt" id="lbl-vib-peak">0.06g</span></label>
+                                    <input type="range" id="input-vib-peak" min="0.0" max="3.0" step="0.05" value="0.06">
+                                </div>
+                                <div class="field-group">
+                                    <label>Dominant Freq (Hz): <span class="val-txt" id="lbl-vib-freq">14.5 Hz</span></label>
+                                    <input type="range" id="input-vib-freq" min="1" max="100" step="0.5" value="14.5">
+                                </div>
+                                <div class="field-group">
+                                    <label>Crack Breakwire State:</label>
+                                    <select id="input-crack">
+                                        <option value="1">1 - Intact (Normal Continuity)</option>
+                                        <option value="0">0 - Broken (Fissure Initiation)</option>
+                                    </select>
+                                </div>
+                                <div class="field-group">
+                                    <label>Temp-Humidity Index: <span class="val-txt" id="lbl-env">0.55</span></label>
+                                    <input type="range" id="input-env" min="0.0" max="1.0" step="0.02" value="0.55">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ML Output Evaluation Panel -->
+                        <div class="card-sleek">
+                            <div class="card-header-sleek">
+                                <div>
+                                    <h2>🤖 Three-Tier ML Model Inference Results</h2>
+                                    <span class="card-subtitle">Edge, Gateway & Cloud Multi-stage ML</span>
+                                </div>
+                            </div>
+
+                            <!-- Stage 1 Edge TinyML -->
+                            <div class="ml-card-result">
+                                <div class="ml-res-head">
+                                    <h3>Stage 1: Slave Node Edge TinyML (ESP32-S3)</h3>
+                                    <span class="tech-tag">isolation_forest_model.h</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Anomaly Rating:</span>
+                                    <span class="val-bold" id="edge-rating">NORMAL</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Raw Anomaly Score:</span>
+                                    <span class="val-dark" id="edge-score">-0.4720</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Threshold Boundary:</span>
+                                    <span class="val-dark">-0.6127</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>ESP32 Execution Speed:</span>
+                                    <span class="val-dark text-green-dark" id="edge-speed">112.4 µs</span>
+                                </div>
+                            </div>
+
+                            <!-- Stage 2 Gateway Correlator -->
+                            <div class="ml-card-result">
+                                <div class="ml-res-head">
+                                    <h3>Stage 2: Master Node Gateway Correlator</h3>
+                                    <span class="tech-tag">Offline Spatial Rules Engine</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Evaluated Event Type:</span>
+                                    <span class="val-bold" id="gateway-event">NORMAL_STABLE</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Blast Filter Action:</span>
+                                    <span class="val-dark" id="gateway-blast">No Blast Detected</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Physical Siren & SMS:</span>
+                                    <span class="val-dark" id="gateway-siren">Muted / Offline</span>
+                                </div>
+                            </div>
+
+                            <!-- Stage 3 Cloud LSTM -->
+                            <div class="ml-card-result">
+                                <div class="ml-res-head">
+                                    <h3>Stage 3: Cloud LSTM Spatial-Temporal Prediction</h3>
+                                    <span class="tech-tag">TensorFlow Keras (24hr Window)</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Subsidence Probability:</span>
+                                    <span class="val-bold" id="cloud-prob">2.4%</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Predicted Max Surface Displacement:</span>
+                                    <span class="val-bold" id="cloud-disp">0.8 mm</span>
+                                </div>
+                                <div class="row-val">
+                                    <span>Predicted Severity Class:</span>
+                                    <span class="val-bold" id="cloud-sev">LOW</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+
+                <!-- TAB 3: 90-DAY SIMULATION PLAYER -->
+                <main class="tab-content" id="tab-scenarios">
+                    <div class="card-sleek">
+                        <div class="card-header-sleek">
                             <div>
-                                <strong style="font-size: 0.88rem; color: #f8fafc; font-family: Inter, sans-serif;">GOB ZONE (Collapsed Roof Void & Strata Deformation Trough)</strong><br>
-                                <span style="font-size: 0.75rem; color: #94a3b8;">Real-Time Underground Caving Strain Transmission</span>
+                                <h2>🎬 Interactive 90-Day Indian Longwall Mining Timeline</h2>
+                                <span class="card-subtitle">Replay pre-recorded deformation sequences</span>
                             </div>
-                            <span style="font-size: 0.75rem; font-weight: 800; background: #dc2626; color: #ffffff; padding: 4px 12px; border-radius: 4px; letter-spacing: 0.5px;">HIGH RISK AREA</span>
+                        </div>
+                        
+                        <div class="scenario-grid-4">
+                            <button class="scen-card-btn active" data-scenario="normal">
+                                <span class="scen-icon-big">🟢</span>
+                                <strong>Phase 1: Normal (Days 0 - 60)</strong>
+                                <span>Stable baseline ground, noise & thermal drift only</span>
+                            </button>
+                            <button class="scen-card-btn" data-scenario="pre_subsidence">
+                                <span class="scen-icon-big">🟡</span>
+                                <strong>Phase 2: Pre-Subsidence (Days 60 - 75)</strong>
+                                <span>Slow monotonic tilt ramp (0.05° → 0.3°), early strain bump</span>
+                            </button>
+                            <button class="scen-card-btn" data-scenario="active">
+                                <span class="scen-icon-big">🔴</span>
+                                <strong>Phase 3: Active Collapse (Days 75 - 85)</strong>
+                                <span>Accelerating tilt (>1.5°), strain jumps, breakwire flip</span>
+                            </button>
+                            <button class="scen-card-btn" data-scenario="blast">
+                                <span class="scen-icon-big">🟣</span>
+                                <strong>Phase 4: Dynamite Blast Event</strong>
+                                <span>High RMS vibration spike (1.2g) with ZERO tilt/strain shift</span>
+                            </button>
+                        </div>
+
+                        <div class="chart-box-large">
+                            <canvas id="scenarioChart"></canvas>
                         </div>
                     </div>
-                </div>
+                </main>
+
+                <!-- TAB 4: STEP-BY-STEP GUIDE -->
+                <main class="tab-content" id="tab-guide">
+                    <div class="card-sleek guide-wrapper">
+                        <h2>📖 Complete Step-by-Step Guide: How to Test & Deploy</h2>
+                        <div class="steps-grid-2">
+                            <div class="step-box-light">
+                                <span class="step-badge-num">Step 1</span>
+                                <div class="step-body-txt">
+                                    <strong>Flash Slave Node Firmware</strong>
+                                    Flash ESP32-S3 firmware with TinyML Isolation Forest header model.
+                                </div>
+                            </div>
+                            <div class="step-box-light">
+                                <span class="step-badge-num">Step 2</span>
+                                <div class="step-body-txt">
+                                    <strong>Launch Master Gateway</strong>
+                                    Deploy spatial correlator & blast discrimination logic.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-container-light">
+                            # Flash Firmware<br>
+                            esptool.py --chip esp32s3 --port COM4 write_flash 0x10000 firmware.bin
+                        </div>
+                    </div>
+                </main>
+
+                <footer class="footer-sleek">
+                    MineTrac AI Mining Platform &copy; 2026 | Built for Smart India Hackathon (SIH26) Problem Statement
+                </footer>
             </div>
-
-            <!-- GIS Map & Early Warning Section -->
-            <div class="grid-main">
-                <!-- GIS Map Panel -->
-                <div class="card-light">
-                    <div class="card-header-light">
-                        <h2>🗺️ Surface Panel GIS Coordinates (Leaflet Map)</h2>
-                        <span class="badge-light">Raniganj / Jharia GPS Grid</span>
-                    </div>
-                    <div id="gis-map" class="map-box"></div>
-                    <div class="map-legend-light">
-                        <span><i class="dot-light normal"></i> Normal</span>
-                        <span><i class="dot-light warning"></i> Pre-Subsidence</span>
-                        <span><i class="dot-light critical"></i> Active Alert</span>
-                        <span><i class="dot-light blast"></i> Blast Filtered</span>
-                    </div>
-                </div>
-
-                <!-- Live Risk Gauge & Alerts -->
-                <div class="card-light">
-                    <div class="card-header-light">
-                        <h2>🚨 Gateway Early Warning Status</h2>
-                        <span class="badge-light">Master Gateway Active</span>
-                    </div>
-                    
-                    <div class="gauge-wrapper">
-                        <div class="gauge-val-text" id="overall-risk-val">0.02</div>
-                        <div class="gauge-lbl-text">Subsidence Risk Score (0.0 to 1.0)</div>
-                        <div class="bar-bg">
-                            <div class="bar-fill" id="risk-bar" style="width: 2%;"></div>
-                        </div>
-                    </div>
-
-                    <div class="alert-panel normal" id="alert-box">
-                        <div class="alert-ic" id="alert-icon">🟢</div>
-                        <div class="alert-txt">
-                            <h3 id="alert-title">NORMAL_STABLE</h3>
-                            <p id="alert-msg">All ground tilt and digital strain indicators are within safe limits.</p>
-                        </div>
-                    </div>
-
-                    <div class="quick-stats-grid">
-                        <div class="stat-box">
-                            <span class="stat-v" id="stat-max-tilt">0.02°</span>
-                            <span class="stat-l">Max Surface Tilt</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-v" id="stat-max-strain">0.5 µε</span>
-                            <span class="stat-l">Max Strain Delta</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-v" id="stat-disp">0.0 mm</span>
-                            <span class="stat-l">Est. Displacement</span>
-                        </div>
-                        <div class="stat-box">
-                            <span class="stat-v" id="stat-siren">MUTED</span>
-                            <span class="stat-l">Physical Siren</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Real-Time Charts -->
-                <div class="card-light grid-full">
-                    <div class="card-header-light">
-                        <h2>📈 Real-Time Multi-Sensor Telemetry Streams</h2>
-                        <div class="filter-controls">
-                            <button class="btn-sm primary" id="btn-chart-tilt">Tilt Angle</button>
-                            <button class="btn-sm" id="btn-chart-strain">Strain Delta</button>
-                            <button class="btn-sm" id="btn-chart-vib">Vibration RMS</button>
-                        </div>
-                    </div>
-                    <div class="chart-box">
-                        <canvas id="liveChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- TAB 2: INTERACTIVE ML TEST BENCH -->
-        <main class="tab-content" id="tab-simulator">
-            <div class="grid-2col">
-                <!-- Input Panel -->
-                <div class="card-light">
-                    <div class="card-header-light">
-                        <h2>🎛️ Sensor Inputs (Node N3 - Center)</h2>
-                        <div class="filter-controls">
-                            <button class="btn-sm primary" id="btn-preset-normal">Normal</button>
-                            <button class="btn-sm warning" id="btn-preset-pre">Pre-Subsidence</button>
-                            <button class="btn-sm danger" id="btn-preset-active">Active</button>
-                            <button class="btn-sm purple" id="btn-preset-blast">Blast</button>
-                        </div>
-                    </div>
-
-                    <div class="sliders-2col">
-                        <div class="field-group">
-                            <label>Tilt Mean (°): <span class="val-txt" id="lbl-tilt">0.02°</span></label>
-                            <input type="range" id="input-tilt" min="0" max="3.0" step="0.01" value="0.02">
-                        </div>
-                        <div class="field-group">
-                            <label>Tilt Rate (°/min): <span class="val-txt" id="lbl-tilt-rate">0.0000</span></label>
-                            <input type="range" id="input-tilt-rate" min="-0.05" max="0.05" step="0.001" value="0.0001">
-                        </div>
-                        <div class="field-group">
-                            <label>Strain Delta (µε): <span class="val-txt" id="lbl-strain">0.5 µε</span></label>
-                            <input type="range" id="input-strain" min="-5" max="60" step="0.5" value="0.5">
-                        </div>
-                        <div class="field-group">
-                            <label>Vibration RMS (g): <span class="val-txt" id="lbl-vib-rms">0.025g</span></label>
-                            <input type="range" id="input-vib-rms" min="0.0" max="2.0" step="0.01" value="0.025">
-                        </div>
-                        <div class="field-group">
-                            <label>Vibration Peak (g): <span class="val-txt" id="lbl-vib-peak">0.06g</span></label>
-                            <input type="range" id="input-vib-peak" min="0.0" max="3.0" step="0.05" value="0.06">
-                        </div>
-                        <div class="field-group">
-                            <label>Dominant Freq (Hz): <span class="val-txt" id="lbl-vib-freq">14.5 Hz</span></label>
-                            <input type="range" id="input-vib-freq" min="1" max="100" step="0.5" value="14.5">
-                        </div>
-                        <div class="field-group">
-                            <label>Crack Breakwire State:</label>
-                            <select id="input-crack">
-                                <option value="1">1 - Intact (Normal Continuity)</option>
-                                <option value="0">0 - Broken (Fissure Initiation)</option>
-                            </select>
-                        </div>
-                        <div class="field-group">
-                            <label>Temp-Humidity Index: <span class="val-txt" id="lbl-env">0.55</span></label>
-                            <input type="range" id="input-env" min="0.0" max="1.0" step="0.02" value="0.55">
-                        </div>
-                    </div>
-                </div>
-
-                <!-- ML Output Evaluation Panel -->
-                <div class="card-light">
-                    <div class="card-header-light">
-                        <h2>🤖 Three-Tier ML Model Inference Results</h2>
-                    </div>
-
-                    <!-- Stage 1 Edge TinyML -->
-                    <div class="ml-card-result">
-                        <div class="ml-res-head">
-                            <h3>Stage 1: Slave Node Edge TinyML (ESP32-S3)</h3>
-                            <span class="tech-tag">C Header: isolation_forest_model.h</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Anomaly Rating:</span>
-                            <span class="val-bold" id="edge-rating">NORMAL</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Raw Anomaly Score:</span>
-                            <span class="val-dark" id="edge-score">-0.4720</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Threshold Boundary:</span>
-                            <span class="val-dark">-0.6127</span>
-                        </div>
-                        <div class="row-val">
-                            <span>ESP32 Execution Speed:</span>
-                            <span class="val-dark text-green-dark" id="edge-speed">112.4 µs</span>
-                        </div>
-                    </div>
-
-                    <!-- Stage 2 Gateway Correlator -->
-                    <div class="ml-card-result">
-                        <div class="ml-res-head">
-                            <h3>Stage 2: Master Node Gateway Correlator</h3>
-                            <span class="tech-tag">Offline Rules Engine</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Evaluated Event Type:</span>
-                            <span class="val-bold" id="gateway-event">NORMAL_STABLE</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Blast Filter Action:</span>
-                            <span class="val-dark" id="gateway-blast">No Blast Detected</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Physical Siren & SMS:</span>
-                            <span class="val-dark" id="gateway-siren">Muted / Offline</span>
-                        </div>
-                    </div>
-
-                    <!-- Stage 3 Cloud LSTM -->
-                    <div class="ml-card-result">
-                        <div class="ml-res-head">
-                            <h3>Stage 3: Cloud LSTM Spatial-Temporal Prediction</h3>
-                            <span class="tech-tag">TensorFlow Keras (24hr Window)</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Subsidence Probability:</span>
-                            <span class="val-bold" id="cloud-prob">2.4%</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Predicted Max Surface Displacement:</span>
-                            <span class="val-bold" id="cloud-disp">0.8 mm</span>
-                        </div>
-                        <div class="row-val">
-                            <span>Predicted Severity Class:</span>
-                            <span class="val-bold" id="cloud-sev">LOW</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-
-        <!-- TAB 3: 90-DAY SIMULATION PLAYER -->
-        <main class="tab-content" id="tab-scenarios">
-            <div class="card-light">
-                <div class="card-header-light">
-                    <h2>🎬 Interactive 90-Day Indian Longwall Mining Timeline</h2>
-                </div>
-                
-                <div class="scenario-grid-4">
-                    <button class="scen-card-btn active" data-scenario="normal">
-                        <span class="scen-icon-big">🟢</span>
-                        <strong>Phase 1: Normal (Days 0 - 60)</strong>
-                        <span>Stable baseline ground, noise & thermal drift only</span>
-                    </button>
-                    <button class="scen-card-btn" data-scenario="pre_subsidence">
-                        <span class="scen-icon-big">🟡</span>
-                        <strong>Phase 2: Pre-Subsidence (Days 60 - 75)</strong>
-                        <span>Slow monotonic tilt ramp (0.05° → 0.3°), early strain bump</span>
-                    </button>
-                    <button class="scen-card-btn" data-scenario="active">
-                        <span class="scen-icon-big">🔴</span>
-                        <strong>Phase 3: Active Collapse (Days 75 - 85)</strong>
-                        <span>Accelerating tilt (>1.5°), strain jumps, breakwire flip</span>
-                    </button>
-                    <button class="scen-card-btn" data-scenario="blast">
-                        <span class="scen-icon-big">🟣</span>
-                        <strong>Phase 4: Dynamite Blast Event</strong>
-                        <span>High RMS vibration spike (1.2g) with ZERO tilt/strain shift</span>
-                    </button>
-                </div>
-
-                <div class="chart-box-large">
-                    <canvas id="scenarioChart"></canvas>
-                </div>
-            </div>
-        </main>
-
-        <!-- TAB 4: STEP-BY-STEP GUIDE -->
-        <main class="tab-content" id="tab-guide">
-            <div class="card-light guide-wrapper">
-                <h2>📖 Complete Step-by-Step Guide: How to Test & Deploy</h2>
-                <div class="steps-grid-2">
-                    <div class="step-box-light">
-                        <span class="step-badge-num">Step 1</span>
-                        <div class="step-body-txt">
-                            <strong>Flash Slave Node Firmware</strong>
-                            Flash ESP32-S3 firmware with TinyML Isolation Forest header model.
-                        </div>
-                    </div>
-                    <div class="step-box-light">
-                        <span class="step-badge-num">Step 2</span>
-                        <div class="step-body-txt">
-                            <strong>Launch Master Gateway</strong>
-                            Deploy spatial correlator & blast discrimination logic.
-                        </div>
-                    </div>
-                </div>
-                <div class="code-container-light">
-                    # Flash Firmware<br>
-                    esptool.py --chip esp32s3 --port COM4 write_flash 0x10000 firmware.bin
-                </div>
-            </div>
-        </main>
-
-        <footer class="footer-light">
-            MineTrac AI Mining Platform &copy; 2026 | Built for Smart India Hackathon (SIH26) Problem Statement
-        </footer>
+        </div>
     </div>
 
     <!-- MODAL OVERLAYS -->
