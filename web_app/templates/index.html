@@ -137,14 +137,15 @@
                 </div>
 
                 <div class="schematic-box" style="border: 1px solid #cbd5e1; border-radius: 10px; overflow: hidden; background: #0f172a;">
-                    <!-- Card Top Header with Toggle -->
+                    <!-- Card Top Header with Toggle for All 3 Images -->
                     <div style="background: #0f172a; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #334155;">
                         <span style="color: #f8fafc; font-weight: 700; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;">
                             <span>⛏️</span> Geological Cross-Section Visualizer (Geomechanical Strata Model)
                         </span>
                         <div style="display: flex; gap: 8px;">
                             <button class="scen-img-btn active" id="btn-show-model-img" onclick="switchMineImage(1)" style="background: #0284c7; color: white; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Strata Layer Model</button>
-                            <button class="scen-img-btn" id="btn-show-subsidence-img" onclick="switchMineImage(2)" style="background: #334155; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Surface Sinkhole Collapse</button>
+                            <button class="scen-img-btn" id="btn-show-sandbox-img" onclick="switchMineImage(2)" style="background: #334155; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Physical Sandbox Model</button>
+                            <button class="scen-img-btn" id="btn-show-subsidence-img" onclick="switchMineImage(3)" style="background: #334155; color: #94a3b8; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; cursor: pointer; transition: all 0.2s ease;">Surface Sinkhole Collapse</button>
                         </div>
                     </div>
 
@@ -175,10 +176,11 @@
                         </div>
                     </div>
 
-                    <!-- Image Display Container (Full Uncropped View) -->
-                    <div style="position: relative; width: 100%; height: 440px; background: #020617; display: flex; align-items: center; justify-content: center; padding: 0;">
-                        <img id="mine-cross-img-1" src="/static/images/mine_cross_section_1.png" alt="Mine Cross-Section Strata" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
-                        <img id="mine-cross-img-2" src="/static/images/mine_cross_section_2.png" alt="Mine Surface Sinkhole Collapse" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: none;">
+                    <!-- Image Display Container (Proportional Uncropped View for All 3 Images) -->
+                    <div style="position: relative; width: 100%; height: 480px; background: #070a12; display: flex; align-items: center; justify-content: center; padding: 0; overflow: hidden;">
+                        <img id="mine-cross-img-1" src="/static/images/mine_cross_section_1.png" alt="Mine Cross-Section Strata" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: block; background: #070a12;">
+                        <img id="mine-cross-img-2" src="/static/images/mine_cross_section_2.png" alt="Mine Physical Sandbox Model" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: none; background: #070a12;">
+                        <img id="mine-cross-img-3" src="/static/images/mine_cross_section_3.png" alt="Mine Surface Sinkhole Collapse" style="width: 100%; height: 100%; object-fit: contain; object-position: center; display: none; background: #070a12;">
 
                         <!-- Crisp High-Contrast Bottom GOB Zone Banner -->
                         <div id="gob-zone" style="position: absolute; bottom: 14px; left: 20px; right: 20px; background: rgba(15, 23, 42, 0.92); backdrop-filter: blur(6px); border-left: 5px solid #dc2626; border-radius: 6px; padding: 10px 18px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">

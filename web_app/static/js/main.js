@@ -744,18 +744,31 @@ function initLiveHardwarePolling() {
 function switchMineImage(imgNum) {
     const img1 = document.getElementById('mine-cross-img-1');
     const img2 = document.getElementById('mine-cross-img-2');
+    const img3 = document.getElementById('mine-cross-img-3');
     const btn1 = document.getElementById('btn-show-model-img');
-    const btn2 = document.getElementById('btn-show-subsidence-img');
+    const btn2 = document.getElementById('btn-show-sandbox-img');
+    const btn3 = document.getElementById('btn-show-subsidence-img');
 
     if (imgNum === 1) {
         if (img1) img1.style.display = 'block';
         if (img2) img2.style.display = 'none';
+        if (img3) img3.style.display = 'none';
         if (btn1) { btn1.style.background = '#0284c7'; btn1.style.color = '#ffffff'; }
-        if (btn2) { btn2.style.background = '#475569'; btn2.style.color = '#ffffff'; }
-    } else {
+        if (btn2) { btn2.style.background = '#334155'; btn2.style.color = '#94a3b8'; }
+        if (btn3) { btn3.style.background = '#334155'; btn3.style.color = '#94a3b8'; }
+    } else if (imgNum === 2) {
         if (img1) img1.style.display = 'none';
         if (img2) img2.style.display = 'block';
-        if (btn1) { btn1.style.background = '#475569'; btn1.style.color = '#ffffff'; }
-        if (btn2) { btn2.style.background = '#dc2626'; btn2.style.color = '#ffffff'; }
+        if (img3) img3.style.display = 'none';
+        if (btn1) { btn1.style.background = '#334155'; btn1.style.color = '#94a3b8'; }
+        if (btn2) { btn2.style.background = '#0284c7'; btn2.style.color = '#ffffff'; }
+        if (btn3) { btn3.style.background = '#334155'; btn3.style.color = '#94a3b8'; }
+    } else if (imgNum === 3) {
+        if (img1) img1.style.display = 'none';
+        if (img2) img2.style.display = 'none';
+        if (img3) img3.style.display = 'block';
+        if (btn1) { btn1.style.background = '#334155'; btn1.style.color = '#94a3b8'; }
+        if (btn2) { btn2.style.background = '#334155'; btn2.style.color = '#94a3b8'; }
+        if (btn3) { btn3.style.background = '#dc2626'; btn3.style.color = '#ffffff'; }
     }
 }
