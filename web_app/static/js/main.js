@@ -360,16 +360,22 @@ function updateNodeMapColors(statusMap) {
         const status = statusMap['N3'];
         if (status === 'critical') {
             pinN3.style.borderColor = '#dc2626';
-            gobZone.style.borderColor = '#dc2626';
-            gobZone.style.background = '#fee2e2';
+            if (gobZone) {
+                gobZone.style.borderColor = '#dc2626';
+                gobZone.style.background = 'rgba(153, 27, 27, 0.92)';
+            }
         } else if (status === 'warning') {
             pinN3.style.borderColor = '#d97706';
-            gobZone.style.borderColor = '#d97706';
-            gobZone.style.background = '#fef3c7';
+            if (gobZone) {
+                gobZone.style.borderColor = '#d97706';
+                gobZone.style.background = 'rgba(146, 64, 14, 0.92)';
+            }
         } else {
             pinN3.style.borderColor = '#16a34a';
-            gobZone.style.borderColor = '#dc2626';
-            gobZone.style.background = '#fee2e2';
+            if (gobZone) {
+                gobZone.style.borderColor = '#dc2626';
+                gobZone.style.background = 'rgba(15, 23, 42, 0.92)';
+            }
         }
     }
 }
