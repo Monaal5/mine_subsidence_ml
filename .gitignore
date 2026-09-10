@@ -20,3 +20,5 @@ __pycache__/
 Thumbs.db
 *.log
 *.pdf
+generate_*_pdf.py
+generate_labeled_screenshots.py
